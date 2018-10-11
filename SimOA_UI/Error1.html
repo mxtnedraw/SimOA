@@ -1,0 +1,32 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>出错啦！！！</title>
+    <script type="text/javascript">
+        onload = function () {
+            var num = document.getElementById("num").innerHTML;
+            var intervalId = setInterval(function () {
+                num--;
+                document.getElementById("num").innerHTML = num;
+                if (num < 1) {
+                    clearInterval(intervalId);
+                    location.href = "/Home/index";
+                }
+            }, 1000);
+        }
+    </script>
+</head>
+<body style="background-color: #C0E1E1">
+    <center>
+        <p style="font: bold 30px 'PingFangSC','微软雅黑','simsun';">出错啦！！！
+        <br />
+        <br />
+        <span style="font-size: 20px;">
+            非常抱歉，由于不可预测的异常，本次访问出错，<span id="num">3</span>秒后跳转到首页。<br />
+            <a href="javascript:void(0);" onclick=" history.go(-1);">点击此处返回</a>
+            <a href="/Home/Index">点击此处返回本站首页</a>
+        </span></p>
+    </center>
+</body>
+</html>

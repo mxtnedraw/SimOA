@@ -1,0 +1,180 @@
+﻿@model SimOA_Model.ActionInfo
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>编辑权限</title>
+    <link href="~/Content/themes/default/easyui.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-1.7.1.min.js"></script>
+    <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+    <script src="~/Scripts/jquery.easyui.min.js"></script>
+    <script src="~/Scripts/easyui-lang-zh_CN.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <style type="text/css">
+        .tb {
+            width: 150px;
+            margin: 10px 0;
+            padding: 5px 4px;
+            border: 1px solid #95B8E7;
+            box-sizing: border-box;
+        }
+        #UpLoadStatus * {
+            vertical-align:middle;
+        }
+    </style>
+    <script type="text/javascript">
+
+        $(function () {
+            if ($("#IsMenu").val() == "1") {
+                $("#IconDiv").show();
+                $("#UpLoadStatus").html("<img src='@Model.MenuIcon' width='26px' heigth='26px' />");
+            } else {
+                $("#IconDiv").hide();
+            }
+            $("#IsMenu").change(function () {
+                if ($(this).val() == "1") {
+                    $("#IconDiv").show();
+                } else {
+                    $("#IconDiv").hide();
+                }
+            })
+            $("#MenuIcon").filebox({
+                onChange: function () {
+                    var iconFile = $("input[name='MenuIcon'][type='file']").prop("files")[0];
+                    if ($(this).filebox('validate') && iconFile != null) {
+                        var formData = new FormData();
+                        formData.append("file", iconFile);
+                        $.ajax({
+                            url: '@Url.Action("UPLoadFile","ActionInfo")',
+                            type: 'POST',
+                            data: formData,
+                            cache: false,
+                            // 告诉jQuery不要去处理发送的数据
+                            processData: false,
+                            // 告诉jQuery不要去设置Content-Type请求头
+                            contentType: false,
+                            beforeSend: function () {
+                                $("#UpLoadStatus").html("正在上传文件，请稍候...");
+                            },
+                            success: function (data) {
+                                if (data != "no") {
+                                    $("#UpLoadStatus").html("<img src='" + data + "' width='26px' heigth='26px' />");
+                                    $("#MenuIcon").val("");
+                                    $("#viewMenuIcon").val(data);
+                                } else {
+                                    $("#UpLoadStatus").css("style", "color:red");
+                                    $("#UpLoadStatus").html("上传文件失败，请稍候重试");
+                                }
+                            },
+                            error: function (data) {
+                                $("#UpLoadStatus").css("style", "color:red");
+                                $("#UpLoadStatus").html("错误，请稍候重试");
+                            }
+                        });
+                    }
+                }
+            })
+        })
+
+        $.extend($.fn.validatebox.defaults.rules, {
+            uni: {
+                validator: function (value) {
+                    var flag = false;
+                    if ($("#hidTitle").val() == $("#ActionTitle").val()) {
+                        return true;
+                    } else {
+                        $.ajax({
+                            url: '@Url.Action("CheckExist", "ActionInfo")', data: { aName: value }, async: false, dataType: 'text', success: function (data) {
+                                if (data == "ok") {
+                                    flag = true;
+                                }
+                            }
+                        })
+                    }
+                    return flag;
+                },
+                message: '权限名已存在'
+            },
+            icon: {
+                validator: function (value) {
+                    var flag = false;
+                    var fileExt = value.substring(value.lastIndexOf('.'), value.length).toLowerCase();
+                    if (fileExt == ".jpg" || fileExt == ".jpeg" || fileExt == ".png" || fileExt == ".ico") {
+                        flag = true;
+                    }
+                    return flag;
+                },
+                message: '文件类型错误(只接受jpg,jpeg,png,ico)'
+            },
+            size: {
+                validator: function (value) {
+                    var flag = false;
+                    var file = $("input[name='MenuIcon'][type='file']").prop("files")[0];
+                    if (file != null && file.size < 1024 * 1024) {
+                        flag = true;
+                    }
+                    return flag;
+                },
+                message: '只接受小于1MB的文件'
+            }
+        });
+
+        function subForm() {
+            $('#editForm').form('submit', {
+                onSubmit: function () {
+                    if ($("#IconDiv").css("display") == "none") {
+                        $("#MenuIcon").filebox("disableValidation");
+                    }
+                    var isValid = $(this).form('validate');
+                    return isValid;	// 返回false终止表单提交
+                },
+                success: function (data) {
+                    //子窗体调用父窗体中的方法。
+                    window.parent.afterEdit(data);
+                }
+            });
+        }
+    </script>
+</head>
+<body style="font-size: 14px; width: 478px;">
+    @using (Ajax.BeginForm("Edit", "ActionInfo", new { }, new AjaxOptions() { }, new { id = "editForm", encType = "multipart/form-data" }))
+    {
+        @Html.HiddenFor(model => model.ActionId)
+        <input type="hidden" id="hidTitle" value="@Model.ActionTitle"/>
+        <div>
+            @Html.LabelFor(model => model.ActionTitle, "权限名称：")
+            @Html.TextBoxFor(model => model.ActionTitle, new { @class = "easyui-validatebox tb", data_options = "required:true,validType:'uni',delay:50000,tipPosition:'left',validateOnCreate:false,validateOnBlur:true" })
+        </div>
+        <div>
+            &nbsp;&nbsp;&nbsp;@Html.LabelFor(model => model.ControllerName, "控制器：")
+            @Html.TextBoxFor(model => model.ControllerName, new { @class = "easyui-validatebox tb", data_options = "required:true,delay:50000,tipPosition:'left',validateOnCreate:false,validateOnBlur:true" })
+        </div>
+        <div>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@Html.LabelFor(model => model.ActionName, "行为：")
+            @Html.TextBoxFor(model => model.ActionName, new { @class = "easyui-validatebox tb", data_options = "required:true,delay:50000,tipPosition:'left',validateOnCreate:false,validateOnBlur:true" })
+        </div>
+        <div>
+            @Html.LabelFor(model => model.IsMenu, "权限类别：")
+            @Html.DropDownListFor(model => model.IsMenu, new List<SelectListItem> { new SelectListItem() { Text = "菜单权限", Value = "1" }, new SelectListItem() { Text = "普通权限", Value = "0" } }, "---请选择---", new { @class = "easyui-validatebox tb", data_options = "required:true,delay:50000,tipPosition:'left',validateOnCreate:false,validateOnBlur:true" })
+        </div>
+        <div id="IconDiv">
+            @Html.LabelFor(model => model.MenuIcon, "菜单图标：")
+            <input type="hidden" id="viewMenuIcon" name="viewMenuIcon" value="@(Model.IsMenu == (byte)0 ? Model.MenuIcon : string.Empty)" />
+            <input id="MenuIcon" name="MenuIcon" class="easyui-filebox" style="width:150px;height:28px;" data-options="required:true,validType:['icon','size'],delay:50000,tipPosition:'left',validateOnCreate:false,validateOnBlur:true,prompt:'请选择图标文件',buttonText: '选择文件',accept:'image/jpeg,image/png,image/x-icon'"><span id="UpLoadStatus"></span>
+        </div>
+
+        <div style="margin-top:20px;">
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@Html.LabelFor(model => model.Remark, "备注：")
+            <input id="Remark" name="Remark" class="easyui-textbox tb" value="@Model.Remark" data-options="multiline:'true',height:60" >
+        </div>
+    }
+
+
+</body>
+</html>

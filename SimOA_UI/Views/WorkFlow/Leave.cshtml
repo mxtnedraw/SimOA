@@ -1,0 +1,93 @@
+﻿@model SimOA_UI.Models.LeaveViewModel
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>发起请假</title>
+    <link href="~/Content/themes/default/easyui.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-1.7.1.min.js"></script>
+    <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+    <script src="~/Scripts/jquery.easyui.min.js"></script>
+    <script src="~/Scripts/easyui-lang-zh_CN.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <style type="text/css">
+        .tb {
+            width: 150px;
+            margin: 10px 0;
+            padding: 5px 4px;
+            border: 1px solid #95B8E7;
+            box-sizing: border-box;
+        }
+    </style>
+    <script type="text/javascript">
+        $(function () {
+
+        })
+
+        $.extend($.fn.validatebox.defaults.rules, {
+            number: {
+                validator: function (value) {
+                    var flag = false;
+                    var rgxSpe = /\D+/;
+                    if (!rgxSpe.test(value)) {
+                        flag = true;
+                    }
+                    return flag;
+                },
+                message: '只能填写数字'
+            }
+        })
+
+        function subForm() {
+            $('#leaveForm').form('submit', {
+                onSubmit: function () {
+                    var isValid = $(this).form('validate');
+                    return isValid;	// 返回false终止表单提交
+                },
+                success: function (data) {
+                    //子窗体调用父窗体中的方法。
+                    window.parent.afterLeave(data);
+                }
+            });
+        }
+    </script>
+</head>
+<body style="font-size: 14px; width: 478px;">
+    @using (Ajax.BeginForm("Leave", "WorkFlow", new { }, new AjaxOptions() { }, new { id = "leaveForm" }))
+    {
+        <div>
+            @Html.LabelFor(model=>model.LeaveTitle,"请假类别：")
+            @Html.DropDownListFor(model => model.LeaveTitle,new List<SelectListItem> { new SelectListItem() { Text = "事假", Value = "1" }, new SelectListItem() { Text = "病假", Value = "2" },new SelectListItem() { Text = "休假", Value = "3" } }, "---请选择---", new { @class = "easyui-validatebox tb", data_options = "required:true,delay:50000,tipPosition:'left',validateOnCreate:false,validateOnBlur:true" })
+        </div>
+        <div>
+            @Html.LabelFor(model=>model.Reason,"请假事由：")
+            @Html.TextBoxFor(model => model.Reason, new { @class = "easyui-validatebox tb", data_options = "required:true,delay:50000,tipPosition:'left',validateOnCreate:false,validateOnBlur:true" })
+        </div>
+        <div>
+            @Html.LabelFor(model=>model.Days,"请假天数：")
+            @Html.TextBoxFor(model => model.Days, new { @class = "easyui-validatebox tb", data_options = "required:true,validType:'number',delay:50000,tipPosition:'left',validateOnCreate:false,validateOnBlur:true" })
+        </div>
+        <div>
+            &nbsp;&nbsp;&nbsp;@Html.LabelFor(model=>model.NextId,"审批人：")
+            @{
+                List<SelectListItem> selectList = ViewData["SelectList"] as List<SelectListItem>;
+                string optionText = selectList.Count == 0 ? "-未找到审批人-" : "";
+              }
+            @Html.DropDownListFor(model => model.NextId, selectList, optionText, new { @class = "easyui-validatebox tb", data_options = "required:true,delay:50000,tipPosition:'left',validateOnCreate:false,validateOnBlur:true" })
+        </div>
+
+        <div style="margin-top:20px;">
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@Html.LabelFor(model => model.Remark, "备注：")
+            <input id="Remark" name="Remark" class="easyui-textbox tb" data-options="multiline:'true',height:80,prompt:'此处填起止日期,如:2018-01-01至2018-01-03(若起始日期为当前日期且请假时间连续，此项可不填)'" >
+        </div>
+    }
+
+
+</body>
+</html>

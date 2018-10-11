@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<objects>
+  <object name="RoleInfoBll" type="SimOA_BLL.RoleInfoBll, SimOA_BLL" singleton="false" >
+  </object>
+  <object name="UserInfoBll" type="SimOA_BLL.UserInfoBll, SimOA_BLL" singleton="false" >
+  </object>
+  <object name="ActionInfoBll" type="SimOA_BLL.ActionInfoBll, SimOA_BLL" singleton="false" >
+  </object>
+  <object name="UserActionInfoBll" type="SimOA_BLL.UserActionInfoBll, SimOA_BLL" singleton="false" >
+  </object>
+  <object name="WFModelBll" type="SimOA_BLL.WFModelBll, SimOA_BLL" singleton="false" >
+  </object>
+  <object name="WFInstanceBll" type="SimOA_BLL.WFInstanceBll, SimOA_BLL" singleton="false" >
+  </object>
+  <object name="WFStepBll" type="SimOA_BLL.WFStepBll, SimOA_BLL" singleton="false" >
+  </object>
+</objects>

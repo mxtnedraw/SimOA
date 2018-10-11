@@ -1,0 +1,90 @@
+﻿@model SimOA_UI.Models.ApproveViewModel
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>审批</title>
+    <link href="~/Content/themes/default/easyui.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-1.7.1.min.js"></script>
+    <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+    <script src="~/Scripts/jquery.easyui.min.js"></script>
+    <script src="~/Scripts/easyui-lang-zh_CN.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <style type="text/css">
+        .tb {
+            width: 150px;
+            margin: 10px 0;
+            padding: 5px 4px;
+            border: 1px solid #95B8E7;
+            box-sizing: border-box;
+        }
+    </style>
+    <script type="text/javascript">
+        $(function () {
+            $("#Approve").change(function () {
+                if ($(this).val() == "true") {
+                    $("#NextId").show();
+                } else {
+                    $("#NextId").hide();
+                }
+            })
+        })
+
+        function subForm() {
+            $('#approveForm').form('submit', {
+                onSubmit: function () {
+                    var isValid = $(this).form('validate');
+                    return isValid;	// 返回false终止表单提交
+                },
+                success: function (data) {
+                    //子窗体调用父窗体中的方法。
+                    window.parent.afterApprove(data,$("#Approve").val());
+                }
+            });
+        }
+    </script>
+</head>
+<body style="font-size: 14px; width: 478px;">
+    @using (Ajax.BeginForm("Approve", "WorkFlow", new { }, new AjaxOptions() { }, new { id = "approveForm" }))
+    {
+        <input type="hidden" name="InstanceId" value="@Model.InstanceId"/>
+        <input type="hidden" name="StepId" value="@Model.StepId" />
+        <div>
+            &nbsp;&nbsp;&nbsp;@Html.LabelFor(model => model.SubBy, "申请人：")
+            @Html.LabelFor(model => model.SubBy, Model.SubBy)
+        </div>
+        <div>
+            @Html.LabelFor(model => model.InstanceTitle, "申请标题：")
+            @Html.LabelFor(model => model.InstanceTitle, Model.InstanceTitle)
+        </div>
+        <div>
+            @Html.LabelFor(model => model.Details, "申请详情：")
+            @Html.LabelFor(model => model.Details, Model.Details)
+        </div>
+        <div>
+            @Html.LabelFor(model => model.Approve, "审批意见：")
+            @Html.DropDownListFor(model => model.Approve, new List<SelectListItem> { new SelectListItem { Text = "同意", Value = "true", Selected = true }, new SelectListItem { Text = "驳回", Value = "false" } }, new { @class = "easyui-validatebox tb", data_options = "required:true,delay:50000,tipPosition:'left',validateOnCreate:false,validateOnBlur:true" })
+        </div>
+        <div style="margin-top: 20px;">
+            @Html.LabelFor(model => model.Tips, "详细意见：")
+            <input id="Tips" name="Tips" class="easyui-textbox tb" data-options="multiline:'true',height:60">
+        </div>
+        
+        <div id="NextId">
+            @Html.LabelFor(model => model.NextId, "下一审批：")
+            @{
+                List<SelectListItem> selectList = ViewData["SelectList"] as List<SelectListItem>;
+            }
+            @Html.DropDownListFor(model => model.NextId, selectList, "无", new { @class = "easyui-validatebox tb"})
+        </div>
+    }
+
+
+</body>
+</html>

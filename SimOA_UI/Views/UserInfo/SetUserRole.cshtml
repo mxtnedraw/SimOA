@@ -1,0 +1,79 @@
+﻿@model List<RoleInfo>
+@{
+    Layout = null;
+}
+@using SimOA_Model
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>为用户分配角色</title>
+    <script src="~/Scripts/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            $("#InitCheckedIds").val(getChecked());
+            $("#toggleAll").click(function () {
+                if ($(this).val() == "全选") {
+                    $(this).val("全不选")
+                    $(":checkbox").attr("checked", "checked");
+                } else if ($(this).val() == "全不选") {
+                    $(this).val("全选")
+                    $(":checkbox").removeAttr("checked");
+                }
+            });
+        })
+
+        function setRoleDeal() {
+            var rIds = getChecked();
+            if (rIds == $("#InitCheckedIds").val()) {
+                window.parent.afterSetRole("ok");
+                return;
+            }
+            var uId = $('#UserId').val();
+
+            //向服务器端发请求
+            $.post('@Url.Action("SetUserRole", "UserInfo")', {
+                uId: uId,
+                rIds: rIds
+            }, function (data) {
+                window.parent.afterSetRole(data);
+            });
+        }
+
+        function getChecked() {
+            var ids = '';
+            $(':checked').each(function () {
+                ids += $(this).val() + ',';
+            });
+            if (ids != '') {
+                ids = ids.substring(0, ids.length - 1);
+            }
+            return ids;
+        }
+    </script>
+</head>
+<body>
+    <div><input type="button" id="toggleAll" value="全选"/></div>
+    <div>
+
+        @{
+            var userInfo = ViewBag.UserInfo as UserInfo;
+            <input  type="hidden" name="UserId" id="UserId" value="@userInfo.UserId"/>
+            <input type="hidden" id="InitCheckedIds" value="" />
+            int counter = Model.Count;
+            for (int i = 0; i < counter; i++)
+            {
+            <input type="checkbox" value="@Model[i].RoleId"
+                    
+                    @if (userInfo.RoleInfo.Contains(Model[i]))
+                    {
+                        @Html.Raw("checked='checked'")
+                    }
+                    
+                    />@Model[i].RoleName<br />
+            }
+        }
+    </div>
+</body>
+</html>

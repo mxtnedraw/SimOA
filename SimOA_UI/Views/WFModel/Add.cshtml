@@ -1,0 +1,84 @@
+﻿@model SimOA_Model.WFModel
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>添加模板</title>
+    <link href="~/Content/themes/default/easyui.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-1.7.1.min.js"></script>
+    <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+    <script src="~/Scripts/jquery.easyui.min.js"></script>
+    <script src="~/Scripts/easyui-lang-zh_CN.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <style type="text/css">
+        .tb {
+            width: 150px;
+            margin: 10px 0;
+            padding: 5px 4px;
+            border: 1px solid #95B8E7;
+            box-sizing: border-box;
+        }
+    </style>
+    <script type="text/javascript">
+        $.extend($.fn.validatebox.defaults.rules, {
+            uni: {
+                validator: function (value) {
+                    var flag = false;
+                    $.ajax({
+                        url: '@Url.Action("CheckExist", "WFModel")', data: { mName: value }, async: false, dataType: 'text', success: function (data) {
+                            if (data == "ok") {
+                                flag = true;
+                            }
+                        }
+                    })
+                    return flag;
+                },
+                message: '模板名已存在'
+            }
+        });
+
+        function subForm() {
+            $('#addForm').form('submit', {
+                onSubmit: function () {
+                    var isValid = $(this).form('validate');
+                    return isValid;	// 返回false终止表单提交
+                },
+                success: function (data) {
+                    //子窗体调用父窗体中的方法。
+                    window.parent.afterAdd(data);
+                }
+            });
+        }
+    </script>
+</head>
+<body style="font-size: 14px; width: 478px;">
+    @using (Ajax.BeginForm("Add", "WFModel", new { }, new AjaxOptions() { }, new { id = "addForm" }))
+    {
+        <div>
+            @Html.LabelFor(model=>model.ModelTitle,"模板名称：")
+            @Html.TextBoxFor(model => model.ModelTitle, new { @class = "easyui-validatebox tb", data_options = "required:true,validType:'uni',delay:50000,tipPosition:'left',validateOnCreate:false,validateOnBlur:true" })
+        </div>
+        <div>
+            &nbsp;&nbsp;&nbsp;@Html.LabelFor(model=>model.ControllerName,"控制器：")
+            @Html.TextBoxFor(model => model.ControllerName, new { @class = "easyui-validatebox tb", data_options = "required:true,delay:50000,tipPosition:'left',validateOnCreate:false,validateOnBlur:true" })
+        </div>
+        <div>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@Html.LabelFor(model=>model.ActionName,"行为：")
+            @Html.TextBoxFor(model => model.ActionName, new { @class = "easyui-validatebox tb", data_options = "required:true,delay:50000,tipPosition:'left',validateOnCreate:false,validateOnBlur:true" })
+        </div>
+        <div style="margin-top:20px;">
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@Html.LabelFor(model => model.Remark, "备注：")
+            @*@Html.TextBoxFor(model => model.Remark, new { @class = "easyui-validatebox tb"})*@
+            <input id="Remark" name="Remark" class="easyui-textbox tb" data-options="multiline:'true',height:60" >
+        </div>
+    }
+
+
+</body>
+</html>

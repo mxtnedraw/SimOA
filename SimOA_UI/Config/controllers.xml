@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<objects xmlns="http://www.springframework.net">
+
+  <object type="SimOA_UI.Controllers.RoleInfoController, SimOA_UI" singleton="false" parent="BaseController" >
+    <property name="RoleInfoBll" ref="RoleInfoBll" />
+  </object>
+  
+  <object type="SimOA_UI.Controllers.LoginController, SimOA_UI" singleton="false" >
+    <property name="UserInfoBll" ref="UserInfoBll" />
+  </object>
+  
+  <object type="SimOA_UI.Controllers.RegisterController, SimOA_UI" singleton="false" >
+    <property name="UserInfoBll" ref="UserInfoBll" />
+    <property name="RoleInfoBll" ref="RoleInfoBll" />
+  </object>
+
+  <object type="SimOA_UI.Controllers.UserInfoController, SimOA_UI" singleton="false" parent="BaseController" >
+    <property name="RoleInfoBll" ref="RoleInfoBll" />
+  </object>
+
+  <object type="SimOA_UI.Controllers.ActionInfoController, SimOA_UI" singleton="false" parent="BaseController" >
+  </object>
+
+  <object type="SimOA_UI.Controllers.HomeController, SimOA_UI" singleton="false" parent="BaseController" >
+    <property name="WFInstanceBll" ref="WFInstanceBll" />
+    <property name="WFStepBll" ref="WFStepBll" />
+  </object>
+  
+  <object type="SimOA_UI.Controllers.WFModelController, SimOA_UI" singleton="false" parent="BaseController" >
+    <property name="WFModelBll" ref="WFModelBll" />
+  </object>
+
+  <object type="SimOA_UI.Controllers.WorkFlowController, SimOA_UI" singleton="false" parent="BaseController" >
+    <property name="WFInstanceBll" ref="WFInstanceBll" />
+    <property name="WFModelBll" ref="WFModelBll" />
+    <property name="WFStepBll" ref="WFStepBll" />
+    <property name="RoleInfoBll" ref="RoleInfoBll" />
+  </object>
+
+  <object name="BaseController" type="SimOA_UI.Controllers.BaseController, SimOA_UI" singleton="false" >
+    <property name="UserInfoBll" ref="UserInfoBll" />
+    <property name="ActionInfoBll" ref="ActionInfoBll" />
+    <property name="UserActionInfoBll" ref="UserActionInfoBll" />
+  </object>
+
+  
+  <!--intentionally do NOT register the AccountController or the ValuesController with the container; demonstrates that the underlying
+  default controller factory will properly (attempt to!) resolve all controllers not registered with Spring.NET
+  using its default controller resolution behavoir-->
+  <!--<object type="Spring.Mvc4QuickStart.Controllers.AccountController, Spring.Mvc4QuickStart" singleton="false" />-->
+  <!--<object type="Spring.Mvc4QuickStart.Controllers.ValuesController, Spring.Mvc4QuickStart" singleton="false" />-->
+</objects>

@@ -1,0 +1,15 @@
+#过滤数据库文件、sln解决方案文件 
+*.mdb  
+*.ldb  
+*.sln  
+
+#过滤文件夹Debug,Release,obj  
+Debug/  
+Release/  
+obj/  
+bin/
+/Lib/
+/packages/
+/SimOA_WorkFlow/
+App_Data/
+UpLoad/

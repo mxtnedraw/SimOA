@@ -1,0 +1,305 @@
+﻿@model IQueryable<SimOA_Model.WFInstance>
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>流程管理</title>
+    <link href="~/Content/themes/default/easyui.css" rel="stylesheet" />
+    <link href="~/Content/themes/icon.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-1.7.1.min.js"></script>
+    <script src="~/Scripts/jquery.easyui.min.js"></script>
+    <script src="~/Scripts/easyui-lang-zh_CN.js"></script>
+    <script src="~/Scripts/datapattern.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <style type="text/css">
+        .right {
+            position: absolute;
+            right: 5px;
+        }
+
+        #right * {
+            vertical-align: middle;
+        }
+    </style>
+    <script type="text/javascript">
+        $(function () {
+            $("#ExpenseDiv").css("display", "none");
+            $("#btnExpense").click(DoExpense);
+            $("#LeaveDiv").css("display", "none");
+            $("#btnLeave").click(DoLeave);
+            $("#ReApplyDiv").hide();
+            $("#btnReApply").click(function () {
+                var selections = $('#tt').datagrid("getSelections");
+                if (selections.length != 1) {
+                    $.messager.alert("提示", "请选择一项被驳回的申请", "warning");
+                    return;
+                }
+                if (selections[0]["InstanceState"] != 1) {
+                    $.messager.alert("提示", "该项不需要重新申请", "warning");
+                    return;
+                }
+                if (selections[0]["SubId"] != selections[0]["UserId"]) {
+                    $.messager.alert("提示", "该项您无权重新申请", "warning");
+                    return;
+                }
+                var InstanceId = selections[0]["InstanceId"];
+                DoReApply(InstanceId);
+            })
+            ////给搜索按钮加一个单击事件
+            $("#btnSearch").click(function () {
+                //获取用户输入的搜索数据.
+                var pars = {
+                    searchId: $("#searchId").val(),
+                    searchName: $("#searchName").combobox("getText"),
+                    from: $("#from").datebox("getValue"),
+                    to: $("#to").datebox("getValue"),
+                    show: $("#showAll").attr("checked") == "checked" ? "all" : ""
+                };
+                //将获取的搜索的数据发送到服务端。
+                loadData(pars)
+            });
+            $("#btnClear").click(function () {
+                //清除筛选框数据.
+                $("#searchId").textbox("clear");
+                $("#searchName").combobox("clear");
+                $("#from").datebox("setValue", "");
+                $("#to").datebox("setValue", "");
+                //重新加载页面。
+                $("#btnSearch").click();
+            });
+            $("#showAll").click(function () {
+                $("#btnSearch").click();
+            })
+
+            loadSelects();
+            loadData();
+        });
+
+        function loadSelects() {
+            $('#searchName').combobox({
+                url: '@Url.Action("GetSelect", "WorkFlow")',
+                valueField: 'id',
+                textField: 'text'
+            });
+        }
+
+        function loadData(queryParams) {
+            $('#tt').datagrid({
+                url: '@Url.Action("GetPageList", "WorkFlow")',
+                title: '申请列表',
+                width: 700,
+                height: 500,
+                fitColumns: true, //列自适应
+                autoRowHeight: false,
+                nowrap: false,
+                idField: 'InstanceId',//主键列的列名
+                loadMsg: '正在加载...',
+                pagination: true,//是否有分页
+                singleSelect: false,//是否单行选择
+                pageSize: 10,//页大小，一页多少条数据
+                pageNumber: 1,//当前页，默认的
+                pageList: [5, 10, 15],
+                queryParams: queryParams,//往后台传递参数
+                onLoadSuccess: function () {
+                    $(this).datagrid("clearSelections");
+                },
+                columns: [[
+                    { field: 'UserId', title: '当前用户', width: 0, align: 'center', hidden: true },
+                    { field: 'SubId', title: '当前用户', width: 0, align: 'center', hidden: true },
+                    { field: 'ck', checkbox: true, align: 'left', width: 50, align: 'center' },
+                    { field: 'InstanceId', title: '编号', width: 30, align: 'center' },
+                    { field: 'InstanceTitle', title: '标题', width: 80, align: 'center' },
+                    { field: 'Details', title: '详细信息', width: 120, align: 'center' },
+                    {
+                        field: 'SubTime', title: '申请时间', width: 60, align: 'center',
+                        formatter: function (value, row, index) {
+                            return value == null ? "" : value.substring(0, 10);
+                        }
+                    },
+                    { field: 'SubBy', title: '申请人', width: 50, align: 'center' },
+                    {
+                        field: 'InstanceState', title: '状态', width: 50, align: 'center',
+                        formatter: function (value, row, index) {
+                            return (value == 0 ? "待审批" : value == 1 ? "已驳回" : "已完成");
+                        }
+                    },
+                    { field: 'RejectMsg', title: '审批意见', width: 80, align: 'center' },
+                    { field: 'Remark', title: '备注', width: 80, align: 'center' }
+                ]],
+                toolbar: "#tb"
+            });
+        }
+        //报销
+        function DoExpense() {
+
+            $("#ExpenseDiv").css("display", "block");
+            $('#ExpenseDiv').dialog({
+                title: '报销',
+                width: 500,
+                height: 400,
+                collapsible: true,
+                maximizable: true,
+                resizable: true,
+                modal: true,
+                buttons: [{
+                    text: '确定',
+                    iconCls: 'icon-ok',
+                    handler: function () {
+                        //提交表单
+                        //调用子窗口的方法.
+                        var childWindow = $("#ExpenseFrame")[0].contentWindow;//表示获取了嵌入在iframe中的子窗体的window对象。
+                        childWindow.subForm();//调用子窗体中的方法，完成表单的提交。
+                    }
+                }, {
+                    text: '取消',
+                    iconCls: 'icon-cancel',
+                    handler: function () {
+                        $('#ExpenseDiv').dialog('close');
+                    }
+                }]
+            });
+            //给iframe指定页面的URL地址。
+            $("#ExpenseFrame").attr("src", '@Url.Action("Expense", "WorkFlow")');
+        }
+        //报销完成后调用该方法。
+        function afterExpense(data) {
+            if (data == "ok") {
+                $('#ExpenseDiv').dialog('close');
+                $('#tt').datagrid('reload');//加载表格不会跳到第一页。
+            } else {
+                $.messager.alert("提醒", "报销申请失败，请稍候重试!", "error");
+            }
+        }
+
+        //请假
+        function DoLeave() {
+
+            $("#LeaveDiv").css("display", "block");
+            $('#LeaveDiv').dialog({
+                title: '请假',
+                width: 500,
+                height: 400,
+                collapsible: true,
+                maximizable: true,
+                resizable: true,
+                modal: true,
+                buttons: [{
+                    text: '确定',
+                    iconCls: 'icon-ok',
+                    handler: function () {
+                        //提交表单
+                        //调用子窗口的方法.
+                        var childWindow = $("#LeaveFrame")[0].contentWindow;//表示获取了嵌入在iframe中的子窗体的window对象。
+                        childWindow.subForm();//调用子窗体中的方法，完成表单的提交。
+                    }
+                }, {
+                    text: '取消',
+                    iconCls: 'icon-cancel',
+                    handler: function () {
+                        $('#LeaveDiv').dialog('close');
+                    }
+                }]
+            });
+            //给iframe指定页面的URL地址。
+            $("#LeaveFrame").attr("src", '@Url.Action("Leave", "WorkFlow")');
+        }
+        //请假完成后调用该方法。
+        function afterLeave(data) {
+            if (data == "ok") {
+                $('#LeaveDiv').dialog('close');
+                $('#tt').datagrid('reload');//加载表格不会跳到第一页。
+            } else {
+                $.messager.alert("提醒", "请假申请失败，请稍候重试!", "error");
+            }
+        }
+
+        //重新申请
+        function DoReApply(InstanceId) {
+            
+            $("#ReApplyDiv").css("display", "block");
+            $('#ReApplyDiv').dialog({
+                title: '重新申请',
+                width: 500,
+                height: 500,
+                collapsible: true,
+                maximizable: true,
+                resizable: true,
+                modal: true,
+                buttons: [{
+                    text: '确定',
+                    iconCls: 'icon-ok',
+                    handler: function () {
+                        //提交表单
+                        //调用子窗口的方法.
+                        var childWindow = $("#ReApplyFrame")[0].contentWindow;//表示获取了嵌入在iframe中的子窗体的window对象。
+                        childWindow.subForm();//调用子窗体中的方法，完成表单的提交。
+                    }
+                }, {
+                    text: '取消',
+                    iconCls: 'icon-cancel',
+                    handler: function () {
+                        $('#ReApplyDiv').dialog('close');
+                    }
+                }]
+            });
+            //给iframe指定页面的URL地址。
+            $("#ReApplyFrame").attr("src", '@Url.Action("ReApply", "WorkFlow")?InstanceId=' + InstanceId);
+        }
+        //重新申请完成后调用该方法。
+        function afterReApply(data) {
+            if (data == "ok") {
+                $('#ReApplyDiv').dialog('close');
+                $('#tt').datagrid('reload');//加载表格不会跳到第一页。
+            } else {
+                $.messager.alert("提醒", "重新申请失败，请稍候重试!", "error");
+            }
+        }
+    </script>
+</head>
+<body>
+    <!------------列表------------------>
+    <div>
+        <table id="tt" style="width: 700px;" iconcls="icon-edit">
+        </table>
+    </div>
+
+    <!------------toolbar------------------>
+    <div id="tb" style="padding: 5px; height: auto">
+        <div style="margin-bottom: 5px; position: relative">
+            <a href="javascript:void(0);" class="easyui-linkbutton" id="btnExpense" iconcls="icon-add" plain="true">报销</a>
+            <a href="javascript:void(0);" class="easyui-linkbutton" id="btnLeave" iconcls="icon-add" plain="true">请假</a>
+            <a href="javascript:void(0);" class="easyui-linkbutton" id="btnReApply" iconcls="icon-edit">重新申请</a>
+            <span id="right" class="right">
+                <input type="checkbox" id="showAll" /><label for="showAll">显示所有申请</label></span>
+        </div>
+        <div>
+            申请时间 从:
+            <input class="easyui-datebox" id="from" style="width: 100px">
+            到:
+            <input class="easyui-datebox" id="to" style="width: 100px;">
+            <span style="margin: 0 3px 0 10px;">编号:</span><input class="easyui-textbox" id="searchId" style="width: 60px; height: 22px; border: 1px solid #95B8E7;">
+            <span style="margin: 0 3px 0 10px;">标题:</span><input id="searchName" name="searchName" panelheight="auto" style="width: 100px" />
+            <a href="javascript:void(0);" class="easyui-linkbutton" id="btnSearch" iconcls="icon-search">查找</a>&nbsp;&nbsp;&nbsp;<a href="javascript:void(0);" class="easyui-linkbutton" id="btnClear" iconcls="icon-no">清除</a>
+        </div>
+    </div>
+
+    <!------------报销表单------------------>
+    <div id="ExpenseDiv">
+        <iframe id="ExpenseFrame" style="width: 100%; height: 98%" frameborder="0"></iframe>
+    </div>
+    <!------------请假表单------------------>
+    <div id="LeaveDiv">
+        <iframe id="LeaveFrame" style="width: 100%; height: 98%" frameborder="0"></iframe>
+    </div>
+    <!------------重新申请表单------------------>
+    <div id="ReApplyDiv">
+        <iframe id="ReApplyFrame" style="width: 100%; height: 98%" frameborder="0"></iframe>
+    </div>
+</body>
+</html>
+

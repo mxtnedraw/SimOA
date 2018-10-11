@@ -1,0 +1,104 @@
+﻿@using SimOA_Model
+@model List<SimOA_Model.ActionInfo>
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>为用户分配权限(否决)</title>
+    <link href="~/Content/themes/default/easyui.css" rel="stylesheet" />
+    <link href="~/Content/themes/icon.css" rel="stylesheet" />
+    <link href="~/Content/tableStyle.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-1.7.1.min.js"></script>
+    <script src="~/Scripts/jquery.easyui.min.js"></script>
+    <script src="~/Scripts/easyui-lang-zh_CN.js"></script>
+    <style type="text/css">
+        .fix {
+            width:65px;
+            height:30px;
+            text-align:center;
+            cursor:pointer;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        @{
+            UserInfo userInfo = ViewBag.UserInfo as UserInfo;
+            List<UserActionInfo> list = ViewBag.UserActionInfo as List<UserActionInfo>;
+        }
+        <input type="hidden" id="UserId" value="@userInfo.UserId"/>
+        <table>
+            <thead>
+                <tr>
+                    <th>权限名称</th>
+                    <th>URL</th>
+                    <th>状态</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.ActionTitle</td>
+                        <td>@Url.Action(item.ActionName, item.ControllerName)</td>
+                        <td id="set_@item.ActionId" class="fix">
+                            <span  
+                                @if (list.Where(ua => ua.ActionId == item.ActionId).Count() != 0)
+                                {
+                                        @("style=display:none")
+                                }
+
+                            >未设置</span>
+                            
+                            <span  
+                                @if (list.Where(ua => ua.ActionId == item.ActionId).Count() == 0)
+                                {
+                                        @("style=display:none")
+                                }
+                                >    
+                            <input class="easyui-switchbutton" name="@item.ActionId" 
+                                @if (list.Where(ua => (ua.ActionId == item.ActionId) && (ua.IsAllow == (byte)1)).Count() > 0)
+                                {
+                                        @(" checked='checked'")
+                                } 
+                                 data-options="@*onChange:stateChange,*@onText:'允许',offText:'禁止'">
+                                </span>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
+<script>
+    $(function () {
+        $("td[id^='set_'] > span").bind('click', Change);
+    });
+    function Change() {
+        if ($(this).css("display") != "none" && !$(this).find(":checkbox").attr("checked")) {
+            $(this).hide().siblings().show();
+        }
+
+        //收集数据
+        var uId = $('#UserId').val();
+        var aId = $(this).parent().find(":checkbox").attr('name');
+        var isAllow = $(this).parent().children(":first").css("display") != "none" ? 0 : $(this).parent().find(":checkbox").attr("checked") ? 1 : -1;
+
+        //发送异步请求
+        $.post('@Url.Action("SetUserAction", "UserInfo")', {
+            uId: uId,
+            aId: aId,
+            isAllow: isAllow
+        }, function (msg) {
+            if (msg != "ok") {
+                $.messager.alert("提醒","分配否决失败，请稍候重试","error");
+            }
+        });
+    }
+</script>

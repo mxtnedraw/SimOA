@@ -1,0 +1,582 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="OADBModel.Store" Provider="System.Data.SQLite.EF6" ProviderManifestToken="data source=D:\za\webDB\OADB.db" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="ActionInfo">
+          <Key>
+            <PropertyRef Name="ActionId" />
+          </Key>
+          <Property Name="ActionId" Type="integer" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ActionTitle" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="AddTime" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="Remark" Type="nvarchar" MaxLength="2147483647" />
+          <Property Name="IsDeleted" Type="tinyint" Nullable="false" />
+          <Property Name="ModifiedTime" Type="varchar" MaxLength="20" />
+          <Property Name="SubBy" Type="integer" Nullable="false" />
+          <Property Name="ControllerName" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="ActionName" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="IsMenu" Type="tinyint" Nullable="false" />
+          <Property Name="MenuIcon" Type="nvarchar" MaxLength="2147483647" />
+        </EntityType>
+        <EntityType Name="RoleInfo">
+          <Key>
+            <PropertyRef Name="RoleId" />
+          </Key>
+          <Property Name="RoleId" Type="integer" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="RoleName" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="AddTime" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="Remark" Type="nvarchar" MaxLength="2147483647" />
+          <Property Name="IsDeleted" Type="tinyint" Nullable="false" />
+          <Property Name="ModifiedTime" Type="varchar" MaxLength="20" />
+          <Property Name="SubBy" Type="integer" Nullable="false" />
+          <Property Name="RoleLevel" Type="tinyint" Nullable="false" />
+        </EntityType>
+        <EntityType Name="RoleInfoAnctionInfo">
+          <Key>
+            <PropertyRef Name="ActionInfo_ActionId" />
+            <PropertyRef Name="RoleInfo_RoleId" />
+          </Key>
+          <Property Name="ActionInfo_ActionId" Type="integer" Nullable="false" />
+          <Property Name="RoleInfo_RoleId" Type="integer" Nullable="false" />
+        </EntityType>
+        <EntityType Name="UserActionInfo">
+          <Key>
+            <PropertyRef Name="UserId" />
+            <PropertyRef Name="ActionId" />
+          </Key>
+          <Property Name="IsAllow" Type="tinyint" Nullable="false" />
+          <Property Name="UserId" Type="integer" Nullable="false" />
+          <Property Name="ActionId" Type="integer" Nullable="false" />
+        </EntityType>
+        <EntityType Name="UserInfo">
+          <Key>
+            <PropertyRef Name="UserId" />
+          </Key>
+          <Property Name="UserId" Type="integer" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Username" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Password" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="ErrorCount" Type="int" Nullable="false" />
+          <Property Name="ErrorTime" Type="varchar" MaxLength="20" />
+          <Property Name="IsDeleted" Type="tinyint" Nullable="false" />
+          <Property Name="RealName" Type="varchar" MaxLength="50" />
+          <Property Name="Age" Type="int" />
+          <Property Name="Gender" Type="tinyint" />
+          <Property Name="AddTime" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="PhoneNumber" Type="varchar" MaxLength="20" />
+          <Property Name="Email" Type="varchar" MaxLength="50" />
+          <Property Name="Remark" Type="nvarchar" MaxLength="2147483647" />
+          <Property Name="ModifiedTime" Type="varchar" MaxLength="20" />
+          <Property Name="SubBy" Type="integer" Nullable="false" />
+        </EntityType>
+        <EntityType Name="UserInfoRoleInfo">
+          <Key>
+            <PropertyRef Name="UserInfo_UserId" />
+            <PropertyRef Name="RoleInfo_RoleId" />
+          </Key>
+          <Property Name="UserInfo_UserId" Type="integer" Nullable="false" />
+          <Property Name="RoleInfo_RoleId" Type="integer" Nullable="false" />
+        </EntityType>
+        <EntityType Name="WFInstance">
+          <Key>
+            <PropertyRef Name="InstanceId" />
+          </Key>
+          <Property Name="InstanceId" Type="integer" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="InstanceTitle" Type="nvarchar" MaxLength="2147483647" />
+          <Property Name="Details" Type="nvarchar" MaxLength="2147483647" />
+          <Property Name="SubBy" Type="integer" Nullable="false" />
+          <Property Name="SubTime" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="Remark" Type="nvarchar" MaxLength="2147483647" />
+          <Property Name="InstanceGuid" Type="varchar" MaxLength="40" Nullable="false" />
+          <Property Name="InstanceState" Type="int" Nullable="false" />
+          <Property Name="RejectMsg" Type="nvarchar" MaxLength="2147483647" />
+        </EntityType>
+        <EntityType Name="WFModel">
+          <Key>
+            <PropertyRef Name="ModelId" />
+          </Key>
+          <Property Name="ModelId" Type="integer" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ModelTitle" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="AddTime" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="Remark" Type="nvarchar" MaxLength="2147483647" />
+          <Property Name="IsDeleted" Type="tinyint" Nullable="false" />
+          <Property Name="ModifiedTime" Type="varchar" MaxLength="20" />
+          <Property Name="SubBy" Type="integer" Nullable="false" />
+          <Property Name="ControllerName" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="ActionName" Type="varchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="WFStep">
+          <Key>
+            <PropertyRef Name="StepId" />
+          </Key>
+          <Property Name="StepId" Type="integer" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="InstanceId" Type="integer" Nullable="false" />
+          <Property Name="Tips" Type="nvarchar" MaxLength="2147483647" />
+          <Property Name="SubBy" Type="integer" Nullable="false" />
+          <Property Name="SubTime" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="Remark" Type="nvarchar" MaxLength="2147483647" />
+          <Property Name="NextId" Type="integer" Nullable="false" />
+          <Property Name="IsEnd" Type="tinyint" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_RoleInfoAnctionInfo_0_0">
+          <End Role="RoleInfo" Type="Self.RoleInfo" Multiplicity="1" />
+          <End Role="RoleInfoAnctionInfo" Type="Self.RoleInfoAnctionInfo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="RoleInfo">
+              <PropertyRef Name="RoleId" />
+            </Principal>
+            <Dependent Role="RoleInfoAnctionInfo">
+              <PropertyRef Name="RoleInfo_RoleId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_RoleInfoAnctionInfo_1_0">
+          <End Role="ActionInfo" Type="Self.ActionInfo" Multiplicity="1" />
+          <End Role="RoleInfoAnctionInfo" Type="Self.RoleInfoAnctionInfo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ActionInfo">
+              <PropertyRef Name="ActionId" />
+            </Principal>
+            <Dependent Role="RoleInfoAnctionInfo">
+              <PropertyRef Name="ActionInfo_ActionId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_UserActionInfo_0_0">
+          <End Role="ActionInfo" Type="Self.ActionInfo" Multiplicity="1" />
+          <End Role="UserActionInfo" Type="Self.UserActionInfo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ActionInfo">
+              <PropertyRef Name="ActionId" />
+            </Principal>
+            <Dependent Role="UserActionInfo">
+              <PropertyRef Name="ActionId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_UserActionInfo_1_0">
+          <End Role="UserInfo" Type="Self.UserInfo" Multiplicity="1" />
+          <End Role="UserActionInfo" Type="Self.UserActionInfo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UserInfo">
+              <PropertyRef Name="UserId" />
+            </Principal>
+            <Dependent Role="UserActionInfo">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_UserInfoRoleInfo_0_0">
+          <End Role="RoleInfo" Type="Self.RoleInfo" Multiplicity="1" />
+          <End Role="UserInfoRoleInfo" Type="Self.UserInfoRoleInfo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="RoleInfo">
+              <PropertyRef Name="RoleId" />
+            </Principal>
+            <Dependent Role="UserInfoRoleInfo">
+              <PropertyRef Name="RoleInfo_RoleId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_UserInfoRoleInfo_1_0">
+          <End Role="UserInfo" Type="Self.UserInfo" Multiplicity="1" />
+          <End Role="UserInfoRoleInfo" Type="Self.UserInfoRoleInfo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UserInfo">
+              <PropertyRef Name="UserId" />
+            </Principal>
+            <Dependent Role="UserInfoRoleInfo">
+              <PropertyRef Name="UserInfo_UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_WFStep_0_0">
+          <End Role="WFInstance" Type="Self.WFInstance" Multiplicity="1" />
+          <End Role="WFStep" Type="Self.WFStep" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="WFInstance">
+              <PropertyRef Name="InstanceId" />
+            </Principal>
+            <Dependent Role="WFStep">
+              <PropertyRef Name="InstanceId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="OADBModelStoreContainer">
+          <EntitySet Name="ActionInfo" EntityType="Self.ActionInfo" store:Type="Tables" />
+          <EntitySet Name="RoleInfo" EntityType="Self.RoleInfo" store:Type="Tables" />
+          <EntitySet Name="RoleInfoAnctionInfo" EntityType="Self.RoleInfoAnctionInfo" store:Type="Tables" />
+          <EntitySet Name="UserActionInfo" EntityType="Self.UserActionInfo" store:Type="Tables" />
+          <EntitySet Name="UserInfo" EntityType="Self.UserInfo" store:Type="Tables" />
+          <EntitySet Name="UserInfoRoleInfo" EntityType="Self.UserInfoRoleInfo" store:Type="Tables" />
+          <EntitySet Name="WFInstance" EntityType="Self.WFInstance" store:Type="Tables" />
+          <EntitySet Name="WFModel" EntityType="Self.WFModel" store:Type="Tables" />
+          <EntitySet Name="WFStep" EntityType="Self.WFStep" store:Type="Tables" />
+          <AssociationSet Name="FK_RoleInfoAnctionInfo_0_0" Association="Self.FK_RoleInfoAnctionInfo_0_0">
+            <End Role="RoleInfo" EntitySet="RoleInfo" />
+            <End Role="RoleInfoAnctionInfo" EntitySet="RoleInfoAnctionInfo" />
+          </AssociationSet>
+          <AssociationSet Name="FK_RoleInfoAnctionInfo_1_0" Association="Self.FK_RoleInfoAnctionInfo_1_0">
+            <End Role="ActionInfo" EntitySet="ActionInfo" />
+            <End Role="RoleInfoAnctionInfo" EntitySet="RoleInfoAnctionInfo" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UserActionInfo_0_0" Association="Self.FK_UserActionInfo_0_0">
+            <End Role="ActionInfo" EntitySet="ActionInfo" />
+            <End Role="UserActionInfo" EntitySet="UserActionInfo" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UserActionInfo_1_0" Association="Self.FK_UserActionInfo_1_0">
+            <End Role="UserInfo" EntitySet="UserInfo" />
+            <End Role="UserActionInfo" EntitySet="UserActionInfo" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UserInfoRoleInfo_0_0" Association="Self.FK_UserInfoRoleInfo_0_0">
+            <End Role="RoleInfo" EntitySet="RoleInfo" />
+            <End Role="UserInfoRoleInfo" EntitySet="UserInfoRoleInfo" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UserInfoRoleInfo_1_0" Association="Self.FK_UserInfoRoleInfo_1_0">
+            <End Role="UserInfo" EntitySet="UserInfo" />
+            <End Role="UserInfoRoleInfo" EntitySet="UserInfoRoleInfo" />
+          </AssociationSet>
+          <AssociationSet Name="FK_WFStep_0_0" Association="Self.FK_WFStep_0_0">
+            <End Role="WFInstance" EntitySet="WFInstance" />
+            <End Role="WFStep" EntitySet="WFStep" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="OADBModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityContainer Name="SimOAContainer" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="ActionInfo" EntityType="OADBModel.ActionInfo" />
+          <EntitySet Name="RoleInfo" EntityType="OADBModel.RoleInfo" />
+          <EntitySet Name="UserActionInfo" EntityType="OADBModel.UserActionInfo" />
+          <EntitySet Name="UserInfo" EntityType="OADBModel.UserInfo" />
+          <EntitySet Name="WFInstance" EntityType="OADBModel.WFInstance" />
+          <EntitySet Name="WFModel" EntityType="OADBModel.WFModel" />
+          <EntitySet Name="WFStep" EntityType="OADBModel.WFStep" />
+          <AssociationSet Name="FK_UserActionInfo_0_0" Association="OADBModel.FK_UserActionInfo_0_0">
+            <End Role="ActionInfo" EntitySet="ActionInfo" />
+            <End Role="UserActionInfo" EntitySet="UserActionInfo" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UserActionInfo_1_0" Association="OADBModel.FK_UserActionInfo_1_0">
+            <End Role="UserInfo" EntitySet="UserInfo" />
+            <End Role="UserActionInfo" EntitySet="UserActionInfo" />
+          </AssociationSet>
+          <AssociationSet Name="FK_WFStep_0_0" Association="OADBModel.FK_WFStep_0_0">
+            <End Role="WFInstance" EntitySet="WFInstance" />
+            <End Role="WFStep" EntitySet="WFStep" />
+          </AssociationSet>
+          <AssociationSet Name="RoleInfoAnctionInfo" Association="OADBModel.RoleInfoAnctionInfo">
+            <End Role="RoleInfo" EntitySet="RoleInfo" />
+            <End Role="ActionInfo" EntitySet="ActionInfo" />
+          </AssociationSet>
+          <AssociationSet Name="UserInfoRoleInfo" Association="OADBModel.UserInfoRoleInfo">
+            <End Role="RoleInfo" EntitySet="RoleInfo" />
+            <End Role="UserInfo" EntitySet="UserInfo" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="ActionInfo">
+          <Key>
+            <PropertyRef Name="ActionId" />
+          </Key>
+          <Property Name="ActionId" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ActionTitle" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="AddTime" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="Remark" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
+          <Property Name="IsDeleted" Type="Byte" Nullable="false" />
+          <Property Name="ModifiedTime" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="SubBy" Type="Int64" Nullable="false" />
+          <Property Name="ControllerName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ActionName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="IsMenu" Type="Byte" Nullable="false" />
+          <Property Name="MenuIcon" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="UserActionInfo" Relationship="OADBModel.FK_UserActionInfo_0_0" FromRole="ActionInfo" ToRole="UserActionInfo" />
+          <NavigationProperty Name="RoleInfo" Relationship="OADBModel.RoleInfoAnctionInfo" FromRole="ActionInfo" ToRole="RoleInfo" />
+        </EntityType>
+        <EntityType Name="RoleInfo">
+          <Key>
+            <PropertyRef Name="RoleId" />
+          </Key>
+          <Property Name="RoleId" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="RoleName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="AddTime" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="Remark" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
+          <Property Name="IsDeleted" Type="Byte" Nullable="false" />
+          <Property Name="ModifiedTime" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="SubBy" Type="Int64" Nullable="false" />
+          <Property Name="RoleLevel" Type="Byte" Nullable="false" />
+          <NavigationProperty Name="ActionInfo" Relationship="OADBModel.RoleInfoAnctionInfo" FromRole="RoleInfo" ToRole="ActionInfo" />
+          <NavigationProperty Name="UserInfo" Relationship="OADBModel.UserInfoRoleInfo" FromRole="RoleInfo" ToRole="UserInfo" />
+        </EntityType>
+        <EntityType Name="UserActionInfo">
+          <Key>
+            <PropertyRef Name="UserId" />
+            <PropertyRef Name="ActionId" />
+          </Key>
+          <Property Name="IsAllow" Type="Byte" Nullable="false" />
+          <Property Name="UserId" Type="Int64" Nullable="false" />
+          <Property Name="ActionId" Type="Int64" Nullable="false" />
+          <NavigationProperty Name="ActionInfo" Relationship="OADBModel.FK_UserActionInfo_0_0" FromRole="UserActionInfo" ToRole="ActionInfo" />
+          <NavigationProperty Name="UserInfo" Relationship="OADBModel.FK_UserActionInfo_1_0" FromRole="UserActionInfo" ToRole="UserInfo" />
+        </EntityType>
+        <EntityType Name="UserInfo">
+          <Key>
+            <PropertyRef Name="UserId" />
+          </Key>
+          <Property Name="UserId" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Username" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Password" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ErrorCount" Type="Int32" Nullable="false" />
+          <Property Name="ErrorTime" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="IsDeleted" Type="Byte" Nullable="false" />
+          <Property Name="RealName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Age" Type="Int32" />
+          <Property Name="Gender" Type="Byte" />
+          <Property Name="AddTime" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="PhoneNumber" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="Email" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Remark" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
+          <Property Name="ModifiedTime" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="SubBy" Type="Int64" Nullable="false" />
+          <NavigationProperty Name="UserActionInfo" Relationship="OADBModel.FK_UserActionInfo_1_0" FromRole="UserInfo" ToRole="UserActionInfo" />
+          <NavigationProperty Name="RoleInfo" Relationship="OADBModel.UserInfoRoleInfo" FromRole="UserInfo" ToRole="RoleInfo" />
+        </EntityType>
+        <EntityType Name="WFInstance">
+          <Key>
+            <PropertyRef Name="InstanceId" />
+          </Key>
+          <Property Name="InstanceId" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="InstanceTitle" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
+          <Property Name="Details" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
+          <Property Name="SubBy" Type="Int64" Nullable="false" />
+          <Property Name="SubTime" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="Remark" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
+          <Property Name="InstanceGuid" Type="String" Nullable="false" MaxLength="40" FixedLength="false" Unicode="false" />
+          <Property Name="InstanceState" Type="Int32" Nullable="false" />
+          <Property Name="RejectMsg" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="WFStep" Relationship="OADBModel.FK_WFStep_0_0" FromRole="WFInstance" ToRole="WFStep" />
+        </EntityType>
+        <EntityType Name="WFModel">
+          <Key>
+            <PropertyRef Name="ModelId" />
+          </Key>
+          <Property Name="ModelId" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ModelTitle" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="AddTime" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="Remark" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
+          <Property Name="IsDeleted" Type="Byte" Nullable="false" />
+          <Property Name="ModifiedTime" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="SubBy" Type="Int64" Nullable="false" />
+          <Property Name="ControllerName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ActionName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="WFStep">
+          <Key>
+            <PropertyRef Name="StepId" />
+          </Key>
+          <Property Name="StepId" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="InstanceId" Type="Int64" Nullable="false" />
+          <Property Name="Tips" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
+          <Property Name="SubBy" Type="Int64" Nullable="false" />
+          <Property Name="SubTime" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="Remark" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
+          <Property Name="NextId" Type="Int64" Nullable="false" />
+          <Property Name="IsEnd" Type="Byte" Nullable="false" />
+          <NavigationProperty Name="WFInstance" Relationship="OADBModel.FK_WFStep_0_0" FromRole="WFStep" ToRole="WFInstance" />
+        </EntityType>
+        <Association Name="FK_UserActionInfo_0_0">
+          <End Type="OADBModel.ActionInfo" Role="ActionInfo" Multiplicity="1" />
+          <End Type="OADBModel.UserActionInfo" Role="UserActionInfo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ActionInfo">
+              <PropertyRef Name="ActionId" />
+            </Principal>
+            <Dependent Role="UserActionInfo">
+              <PropertyRef Name="ActionId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_UserActionInfo_1_0">
+          <End Type="OADBModel.UserInfo" Role="UserInfo" Multiplicity="1" />
+          <End Type="OADBModel.UserActionInfo" Role="UserActionInfo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UserInfo">
+              <PropertyRef Name="UserId" />
+            </Principal>
+            <Dependent Role="UserActionInfo">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_WFStep_0_0">
+          <End Type="OADBModel.WFInstance" Role="WFInstance" Multiplicity="1" />
+          <End Type="OADBModel.WFStep" Role="WFStep" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="WFInstance">
+              <PropertyRef Name="InstanceId" />
+            </Principal>
+            <Dependent Role="WFStep">
+              <PropertyRef Name="InstanceId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="RoleInfoAnctionInfo">
+          <End Type="OADBModel.RoleInfo" Role="RoleInfo" Multiplicity="*" />
+          <End Type="OADBModel.ActionInfo" Role="ActionInfo" Multiplicity="*" />
+        </Association>
+        <Association Name="UserInfoRoleInfo">
+          <End Type="OADBModel.RoleInfo" Role="RoleInfo" Multiplicity="*" />
+          <End Type="OADBModel.UserInfo" Role="UserInfo" Multiplicity="*" />
+        </Association>
+        </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="OADBModelStoreContainer" CdmEntityContainer="SimOAContainer">
+          <EntitySetMapping Name="ActionInfo">
+            <EntityTypeMapping TypeName="OADBModel.ActionInfo">
+              <MappingFragment StoreEntitySet="ActionInfo">
+                <ScalarProperty Name="MenuIcon" ColumnName="MenuIcon" />
+                <ScalarProperty Name="IsMenu" ColumnName="IsMenu" />
+                <ScalarProperty Name="ActionName" ColumnName="ActionName" />
+                <ScalarProperty Name="ControllerName" ColumnName="ControllerName" />
+                <ScalarProperty Name="SubBy" ColumnName="SubBy" />
+                <ScalarProperty Name="ModifiedTime" ColumnName="ModifiedTime" />
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="Remark" ColumnName="Remark" />
+                <ScalarProperty Name="AddTime" ColumnName="AddTime" />
+                <ScalarProperty Name="ActionTitle" ColumnName="ActionTitle" />
+                <ScalarProperty Name="ActionId" ColumnName="ActionId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="RoleInfo">
+            <EntityTypeMapping TypeName="OADBModel.RoleInfo">
+              <MappingFragment StoreEntitySet="RoleInfo">
+                <ScalarProperty Name="RoleLevel" ColumnName="RoleLevel" />
+                <ScalarProperty Name="SubBy" ColumnName="SubBy" />
+                <ScalarProperty Name="ModifiedTime" ColumnName="ModifiedTime" />
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="Remark" ColumnName="Remark" />
+                <ScalarProperty Name="AddTime" ColumnName="AddTime" />
+                <ScalarProperty Name="RoleName" ColumnName="RoleName" />
+                <ScalarProperty Name="RoleId" ColumnName="RoleId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UserActionInfo">
+            <EntityTypeMapping TypeName="OADBModel.UserActionInfo">
+              <MappingFragment StoreEntitySet="UserActionInfo">
+                <ScalarProperty Name="ActionId" ColumnName="ActionId" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="IsAllow" ColumnName="IsAllow" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UserInfo">
+            <EntityTypeMapping TypeName="OADBModel.UserInfo">
+              <MappingFragment StoreEntitySet="UserInfo">
+                <ScalarProperty Name="SubBy" ColumnName="SubBy" />
+                <ScalarProperty Name="ModifiedTime" ColumnName="ModifiedTime" />
+                <ScalarProperty Name="Remark" ColumnName="Remark" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="PhoneNumber" ColumnName="PhoneNumber" />
+                <ScalarProperty Name="AddTime" ColumnName="AddTime" />
+                <ScalarProperty Name="Gender" ColumnName="Gender" />
+                <ScalarProperty Name="Age" ColumnName="Age" />
+                <ScalarProperty Name="RealName" ColumnName="RealName" />
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="ErrorTime" ColumnName="ErrorTime" />
+                <ScalarProperty Name="ErrorCount" ColumnName="ErrorCount" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="Username" ColumnName="Username" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="WFInstance">
+            <EntityTypeMapping TypeName="OADBModel.WFInstance">
+              <MappingFragment StoreEntitySet="WFInstance">
+                <ScalarProperty Name="RejectMsg" ColumnName="RejectMsg" />
+                <ScalarProperty Name="InstanceState" ColumnName="InstanceState" />
+                <ScalarProperty Name="InstanceGuid" ColumnName="InstanceGuid" />
+                <ScalarProperty Name="Remark" ColumnName="Remark" />
+                <ScalarProperty Name="SubTime" ColumnName="SubTime" />
+                <ScalarProperty Name="SubBy" ColumnName="SubBy" />
+                <ScalarProperty Name="Details" ColumnName="Details" />
+                <ScalarProperty Name="InstanceTitle" ColumnName="InstanceTitle" />
+                <ScalarProperty Name="InstanceId" ColumnName="InstanceId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="WFModel">
+            <EntityTypeMapping TypeName="OADBModel.WFModel">
+              <MappingFragment StoreEntitySet="WFModel">
+                <ScalarProperty Name="ActionName" ColumnName="ActionName" />
+                <ScalarProperty Name="ControllerName" ColumnName="ControllerName" />
+                <ScalarProperty Name="SubBy" ColumnName="SubBy" />
+                <ScalarProperty Name="ModifiedTime" ColumnName="ModifiedTime" />
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="Remark" ColumnName="Remark" />
+                <ScalarProperty Name="AddTime" ColumnName="AddTime" />
+                <ScalarProperty Name="ModelTitle" ColumnName="ModelTitle" />
+                <ScalarProperty Name="ModelId" ColumnName="ModelId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="WFStep">
+            <EntityTypeMapping TypeName="OADBModel.WFStep">
+              <MappingFragment StoreEntitySet="WFStep">
+                <ScalarProperty Name="IsEnd" ColumnName="IsEnd" />
+                <ScalarProperty Name="NextId" ColumnName="NextId" />
+                <ScalarProperty Name="Remark" ColumnName="Remark" />
+                <ScalarProperty Name="SubTime" ColumnName="SubTime" />
+                <ScalarProperty Name="SubBy" ColumnName="SubBy" />
+                <ScalarProperty Name="Tips" ColumnName="Tips" />
+                <ScalarProperty Name="InstanceId" ColumnName="InstanceId" />
+                <ScalarProperty Name="StepId" ColumnName="StepId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <AssociationSetMapping Name="RoleInfoAnctionInfo" TypeName="OADBModel.RoleInfoAnctionInfo" StoreEntitySet="RoleInfoAnctionInfo">
+            <EndProperty Name="ActionInfo">
+              <ScalarProperty Name="ActionId" ColumnName="ActionInfo_ActionId" />
+            </EndProperty>
+            <EndProperty Name="RoleInfo">
+              <ScalarProperty Name="RoleId" ColumnName="RoleInfo_RoleId" />
+            </EndProperty>
+          </AssociationSetMapping>
+          <AssociationSetMapping Name="UserInfoRoleInfo" TypeName="OADBModel.UserInfoRoleInfo" StoreEntitySet="UserInfoRoleInfo">
+            <EndProperty Name="UserInfo">
+              <ScalarProperty Name="UserId" ColumnName="UserInfo_UserId" />
+            </EndProperty>
+            <EndProperty Name="RoleInfo">
+              <ScalarProperty Name="RoleId" ColumnName="RoleInfo_RoleId" />
+            </EndProperty>
+          </AssociationSetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="无" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

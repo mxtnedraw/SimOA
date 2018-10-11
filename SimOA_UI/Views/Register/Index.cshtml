@@ -1,0 +1,58 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>易OA系统注册</title>
+    <link href="~/Content/general.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-1.7.1.min.js"></script>
+    <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+    <script src="~/Scripts/load.js"></script>
+    <script src="~/Scripts/md5.js"></script>
+    <script type="text/javascript">
+        onload = function () {
+            changeRegValidCode();
+            $("#txtRegId").val("");
+            $("#txtCheckImg").val("");
+
+            var eles = new Array(document.getElementById("btnReg"), document.getElementById("btnReset"));
+            initjs.iniBtn(eles);
+            var regForm = document.getElementById("regForm");
+            var txts = regForm.getElementsByTagName("input");
+            initjs.tipsChange(txts);
+        }
+
+        function changeRegValidCode() {
+            $("#checkImg").attr("src", '@Url.Action("ValidateCode", "Register")' + '?a=' + Math.random());
+        }
+    </script>
+</head>
+<body>
+    <div id="dvReg">
+        <div id="dvLogo">
+        </div>
+        <div id="dvContent" class="content">
+            <form id="regForm">
+                <span id="regTitle">新用户注册</span>
+                <label for="txtRegId">登录名</label><input type="text" id="txtRegId" name="txtRegId" value="" /><span class="checkValid">*</span><p class="discription">6-16位字母、数字、下划线(_)、连字符(-)组合</p>
+                <label for="txtRegPwd" style="letter-spacing: 2em;">密码</label><input type="password" id="txtRegPwd" name="txtRegPwd" value="" /><span class="checkValid">*</span><p class="discription">6-16位字母、数字、下划线(_)、连字符(-)组合</p>
+                <p id="mmLv"></p>
+                <label for="txtRepeatRegPwd" style="letter-spacing: normal;">确认密码</label><input type="password" id="txtRepeatRegPwd" name="txtRepeatRegPwd" value="" /><span class="checkValid">*</span><p class="discription">再次输入密码</p>
+                <label for="txtCheckImg">验证码</label><img src='@Url.Action("ValidateCode", "Register")' id="checkImg" alt="checkImg" onclick="changeRegValidCode();return false;" style="vertical-align: middle; margin-left: -15px;" /><input type="text" id="txtCheckImg" name="txtCheckImg" style="width: 100px; margin-left: 10px;" value="" /><span class="checkValid">*</span><p class="discription">点击图片更换验证码(不区分大小写)</p>
+                <input type="hidden" id="hiddenRegPwd" name="hiddenRegPwd" value="" />
+                <div unselectable="on" onselectstart="return false;">
+                    <span id="btnReset" class="btnOKCancel" style="background-position: right; position: relative; left: 30px; top: 20px">重&nbsp;&nbsp;&nbsp;&nbsp;置</span>
+                    <span id="btnReg" class="btnOKCancel" style="position: relative; left: 50px; top: 20px">注&nbsp;&nbsp;&nbsp;&nbsp;册</span>
+                </div>
+            </form>
+        </div>
+        <div id="dvCopyright">
+            Copyright ? 2018 SimOA.com
+        </div>
+    </div>
+</body>
+</html>

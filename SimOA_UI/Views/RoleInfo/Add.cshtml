@@ -1,0 +1,98 @@
+﻿@model SimOA_Model.RoleInfo
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>添加角色</title>
+    <link href="~/Content/themes/default/easyui.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-1.7.1.min.js"></script>
+    <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+    <script src="~/Scripts/jquery.easyui.min.js"></script>
+    <script src="~/Scripts/easyui-lang-zh_CN.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <style type="text/css">
+        .tb {
+            width: 150px;
+            margin: 10px 0;
+            padding: 5px 4px;
+            border: 1px solid #95B8E7;
+            box-sizing: border-box;
+        }
+    </style>
+    <script type="text/javascript">
+
+        $.extend($.fn.validatebox.defaults.rules, {
+            uniq: {
+                validator: function (value) {
+                    var flag = false;
+                    $.ajax({
+                        url: '@Url.Action("CheckExist","RoleInfo")', data: { rName: value }, async: false,dataType:'text', success: function (data) {
+                            if (data == "ok") {
+                                flag = true;
+                            }
+                        }
+                    })
+                    return flag;
+                },
+                message: '角色名已存在'
+            },
+            lv: {
+                validator: function (value) {
+                    var flag = false;
+                    var rgxSpe = /^[0-9]$/;
+                    if (rgxSpe.test(value)) {
+                        flag = true;
+                    }
+                    return flag;
+                },
+                message: '只能填写一位整数（0-9）'
+            }
+        });
+
+        function subForm() {
+            $('#addForm').form('submit', {
+                onSubmit: function () {
+                    var isValid = $(this).form('validate');
+                    return isValid;	// 返回false终止表单提交
+                },
+                success: function (data) {
+                    //子窗体调用父窗体中的方法。
+                    window.parent.afterAdd(data);
+                }
+            });
+        }
+      
+        //function afterAdd(data) {
+            
+        //}
+    </script>
+</head>
+<body style="font-size: 14px; width: 478px;">
+    @using (Ajax.BeginForm("Add", "RoleInfo", new { }, new AjaxOptions() { }, new { id = "addForm" }))
+    {
+        <div>
+            @Html.LabelFor(model => model.RoleName, "角色名称：")
+            @Html.TextBoxFor(model => model.RoleName, new { @class = "easyui-validatebox tb", data_options = "required:true,validType:'uniq',delay:50000,tipPosition:'left',validateOnCreate:false,validateOnBlur:true" })
+        </div>
+
+        <div>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@Html.LabelFor(model => model.Remark, "备注：")
+            @Html.TextBoxFor(model => model.Remark, new { @class = "easyui-validatebox tb" })
+        </div>
+        
+        <div>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@Html.LabelFor(model => model.RoleLevel, "级别：")
+            @Html.TextBoxFor(model => model.RoleLevel, new { @class = "easyui-validatebox tb", data_options = "required:false,validType:'lv',delay:50000,tipPosition:'left',validateOnCreate:false,validateOnBlur:true" })
+        </div>
+    }
+
+
+</body>
+</html>
+

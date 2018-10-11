@@ -1,0 +1,46 @@
+﻿<#@ template language="C#" debug="false" hostspecific="true"#>
+<#@ include file="EF6.Utility.CS.ttinclude"#>
+<#@ output extension=".cs"#>
+ <#
+    const string inputFile = @"../SimOA_Model/SimOA.edmx";
+　　var textTransform = DynamicTextTransformation.Create(this);
+　　var code = new CodeGenerationTools(this);
+　　var ef = new MetadataTools(this);
+　　var fileManager = EntityFrameworkTemplateFileManager.Create(this);
+　　EdmMetadataLoader loader=new EdmMetadataLoader(textTransform.Host, textTransform.Errors);
+　　EdmItemCollection itemCollection = (EdmItemCollection)loader.CreateEdmItemCollection(inputFile);
+    //itemCollection.CreateEdmItemCollection(inputFile);  
+#>
+using SimOA_Model;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace SimOA_IDAL
+{
+<# 
+ foreach (EntityType entity in itemCollection.GetItems<EntityType>().OrderBy(e => e.Name))
+
+ { 
+ 
+ //fileManager.StartNewFile(entity.Name + "Bll.cs");
+     
+  #>	
+ 	public partial interface I<#=entity.Name#>Dal :IBaseDal<<#=entity.Name#>>
+     {
+		
+     }   
+  <#}#>
+  }
+
+  <#+ 
+public static void ArgumentNotNull<T>(T arg, string name) where T : class
+{
+    if (arg == null)
+    {
+        throw new ArgumentNullException(name);
+    }
+}
+#>

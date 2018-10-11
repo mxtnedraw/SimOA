@@ -1,0 +1,128 @@
+﻿@model SimOA_UI.Models.ReApplyViewModel
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>重新申请</title>
+    <link href="~/Content/themes/default/easyui.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-1.7.1.min.js"></script>
+    <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+    <script src="~/Scripts/jquery.easyui.min.js"></script>
+    <script src="~/Scripts/easyui-lang-zh_CN.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <style type="text/css">
+        .tb {
+            width: 150px;
+            margin: 10px 0;
+            padding: 5px 4px;
+            border: 1px solid #95B8E7;
+            box-sizing: border-box;
+        }
+    </style>
+    <script type="text/javascript">
+        $(function () {
+
+        })
+
+        $.extend($.fn.validatebox.defaults.rules, {
+            number: {
+                validator: function (value) {
+                    var flag = false;
+                    var rgxSpe = /\D+/;
+                    if (!rgxSpe.test(value)) {
+                        flag = true;
+                    }
+                    return flag;
+                },
+                message: '只能填写数字'
+            }
+        })
+
+        function subForm() {
+            $('#ReApplyForm').form('submit', {
+                onSubmit: function () {
+                    var isValid = $(this).form('validate');
+                    return isValid;	// 返回false终止表单提交
+                },
+                success: function (data) {
+                    //子窗体调用父窗体中的方法。
+                    window.parent.afterReApply(data);
+                }
+            });
+        }
+    </script>
+</head>
+<body style="font-size: 14px; width: 478px;">
+
+    <div>
+        @Html.LabelFor(model => model.InstanceTitle, "申请标题：")
+        @Html.LabelFor(model => model.InstanceTitle, Model.InstanceTitle)
+    </div>
+    <div>
+        @Html.LabelFor(model => model.Details, "申请详情：")
+        @Html.LabelFor(model => model.Details, Model.Details)
+    </div>
+    <div>
+        @Html.LabelFor(model => model.Tips, "审批意见：")
+        @Html.LabelFor(model => model.Tips, Model.Tips)
+    </div>
+    <div>
+        &nbsp;&nbsp;&nbsp;@Html.LabelFor(model => model.RejectBy, "审批人：")
+        @Html.LabelFor(model => model.RejectBy, Model.RejectBy)
+    </div>
+    <div>
+        @Html.LabelFor(model => model.RejectTime, "审批日期：")
+        @Html.LabelFor(model => model.RejectTime, Model.RejectTime)
+    </div>
+    <hr />
+    @{
+        string currTitle = "申请标题：", currReason = "申请事由：", currNum = "申请数目：";
+        MvcHtmlString iTitle = Html.TextBoxFor(model => model.InstanceTitle, new { @class = "easyui-validatebox tb", data_options = "required:true,delay:50000,tipPosition:'left',validateOnCreate:false,validateOnBlur:true" });
+        if (Model.InstanceTitle.StartsWith("报销"))
+        {
+            currTitle = "报销标题："; currReason = "报销事由："; currNum = "报销金额：";
+        }
+        else if (Model.InstanceTitle.StartsWith("请假"))
+        {
+            currTitle = "请假标题："; currReason = "请假事由："; currNum = "请假天数：";
+            iTitle = Html.DropDownListFor(model => model.InstanceTitle, new List<SelectListItem> { new SelectListItem() { Text = "事假", Value = "1" }, new SelectListItem() { Text = "病假", Value = "2" }, new SelectListItem() { Text = "休假", Value = "3" } }, "---请选择---", new { @class = "easyui-validatebox tb", data_options = "required:true,delay:50000,tipPosition:'left',validateOnCreate:false,validateOnBlur:true" });
+        }
+    }
+    @using (Ajax.BeginForm("ReApply", "WorkFlow", new { }, new AjaxOptions() { }, new { id = "ReApplyForm" }))
+    {
+        <div>
+            @Html.HiddenFor(model => model.InstanceId)
+            @Html.LabelFor(model => model.InstanceTitle, currTitle)
+            @iTitle
+        </div>
+        <div>
+            @Html.LabelFor(model => model.Reason, currReason)
+            @Html.TextBoxFor(model => model.Reason, new { @class = "easyui-validatebox tb", data_options = "required:true,delay:50000,tipPosition:'left',validateOnCreate:false,validateOnBlur:true" })
+        </div>
+        <div>
+            @Html.LabelFor(model => model.Num, currNum)
+            @Html.TextBoxFor(model => model.Num, new { @class = "easyui-validatebox tb", data_options = "required:true,validType:'number',delay:50000,tipPosition:'left',validateOnCreate:false,validateOnBlur:true" })
+        </div>
+        <div>
+            &nbsp;&nbsp;&nbsp;@Html.LabelFor(model => model.NextId, "审批人：")
+            @{
+        List<SelectListItem> selectList = ViewData["SelectList"] as List<SelectListItem>;
+        string optionText = selectList.Count == 0 ? "-未找到审批人-" : "";
+            }
+            @Html.DropDownListFor(model => model.NextId, selectList, optionText, new { @class = "easyui-validatebox tb", data_options = "required:true,delay:50000,tipPosition:'left',validateOnCreate:false,validateOnBlur:true" })
+        </div>
+
+        <div style="margin-top: 20px;">
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@Html.LabelFor(model => model.Remark, "备注：")
+            <input id="Remark" name="Remark" class="easyui-textbox tb" value="@Model.Remark" data-options="multiline:'true',height:60">
+        </div>
+    }
+
+
+</body>
+</html>

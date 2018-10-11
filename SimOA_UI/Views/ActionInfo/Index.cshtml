@@ -1,0 +1,257 @@
+﻿@model IQueryable<SimOA_UI.Models.ActionViewModel>
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>权限管理</title>
+    <link href="~/Content/themes/default/easyui.css" rel="stylesheet" />
+    <link href="~/Content/themes/icon.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-1.7.1.min.js"></script>
+    <script src="~/Scripts/jquery.easyui.min.js"></script>
+    <script src="~/Scripts/easyui-lang-zh_CN.js"></script>
+    <script src="~/Scripts/datapattern.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            $("#addDiv").css("display", "none");
+            $("#btnAdd").click(addInfo);
+            $("#editDiv").css("display", "none");
+            $("#btnEdit").click(function () {
+                var selections = $('#tt').datagrid("getSelections");
+                if (selections.length != 1) {
+                    $.messager.alert("提示", "请选择一项要编辑的记录", "warning");
+                    return;
+                }
+                var aId = selections[0]["ActionId"];
+                editInfo(aId);
+            });
+            $("#btnDelete").click(deleteInfos);
+            ////给搜索按钮加一个单击事件
+            $("#btnSearch").click(function () {
+                //获取用户输入的搜索数据.
+                var pars = {
+                    searchId: $("#searchId").val(),
+                    searchName: $("#searchName").val(),
+                    from: $("#from").datebox("getValue"),
+                    to: $("#to").datebox("getValue")
+                };
+                //将获取的搜索的数据发送到服务端。
+                loadData(pars)
+            });
+            $("#btnClear").click(function () {
+                //清除筛选框数据.
+                $("#searchId").textbox("clear");
+                $("#searchName").textbox("clear");
+                $("#from").datebox("setValue", "");
+                $("#to").datebox("setValue", "");
+                //重新加载页面。
+                $("#btnSearch").click();
+            });
+            loadData();
+        });
+
+        function deleteInfos() {
+            var selections = $('#tt').datagrid("getSelections");
+            var sLength = selections.length;
+            if (sLength < 1) {
+                $.messager.alert("提示", "请选择要删除的项", "warning");
+                return;
+            }
+            $.messager.confirm("提示", "确定要删除这" + sLength + "条记录吗？", function (c) {
+                if (c) {
+                    var strId = "";
+                    for (var i = 0; i < sLength; i++) {
+                        strId = strId + selections[i].ActionId + ",";//1,2,3,
+                    }
+                    //去掉最后一个逗号.
+                    strId = strId.substr(0, strId.length - 1);
+                    //将获取的要删除的记录的ID值发送到服务端.
+                    $.post('@Url.Action("Delete", "ActionInfo")', { "strId": strId }, function (data) {
+                        if (data == "ok") {
+                            $('#tt').datagrid('reload');//加载表格不会跳到第一页。
+                            //清除上次操作的历史的记录。
+                            $('#tt').datagrid('clearSelections')
+                        } else {
+                            $.messager.alert("提醒", "删除记录失败，请稍候重试!", "error");
+                        }
+                    });
+                }
+            })
+        }
+
+        function loadData(queryParams) {
+            $('#tt').datagrid({
+                url: '@Url.Action("GetPageList", "ActionInfo")',
+                title: '权限列表',
+                width: 700,
+                height: 500,
+                fitColumns: true, //列自适应
+                autoRowHeight: false,
+                nowrap: false,
+                idField: 'ActionId',//主键列的列名
+                loadMsg: '正在加载权限信息...',
+                pagination: true,//是否有分页
+                singleSelect: false,//是否单行选择
+                pageSize: 10,//页大小，一页多少条数据
+                pageNumber: 1,//当前页，默认的
+                pageList: [5, 10, 15],
+                queryParams: queryParams,//往后台传递参数
+                onLoadSuccess: function () {
+                    $(this).datagrid("clearSelections");
+                },
+                columns: [[
+                    { field: 'ck', checkbox: true, align: 'left', width: 50, align: 'center' },
+					{ field: 'ActionId', title: '编号', width: 40, align: 'center' },
+					{ field: 'ActionTitle', title: '权限名称', width: 100, align: 'center' },
+                    {
+                        field: 'IsMenu', title: '权限类别', width: 80, align: 'center',
+                        formatter: function (value, row, index) {
+                            return value == true ? "菜单权限" : "普通权限";
+                        }
+                    },
+                    { field: 'ControllerName', title: '控制器', width: 80, align: 'center' },
+                    { field: 'ActionName', title: '行为', width: 100, align: 'center' },
+                    { field: 'Remark', title: '备注', width: 80, align: 'center' },
+					{
+					    field: 'AddTime', title: '添加时间', width: 100, align: 'center',
+					    formatter: function (value, row, index) {
+					        return value == null ? "" : value.substring(0, 10);
+					    }
+					},
+                    {
+                        field: 'ModifiedTime', title: '修改时间', width: 100, align: 'center',
+                        formatter: function (value, row, index) {
+                            return value == null ? "" : value.substring(0, 10);
+                        }
+                    },
+                    { field: 'SubBy', title: '最后修改者', width: 80, align: 'center' }
+                ]],
+                toolbar: "#tb"
+            });
+        }
+        //添加信息
+        function addInfo() {
+            
+            $("#addDiv").css("display", "block");
+            $('#addDiv').dialog({
+                title: '添加权限',
+                width: 500,
+                height: 400,
+                collapsible: true,
+                maximizable: true,
+                resizable: true,
+                modal: true,
+                buttons: [{
+                    text: '确定',
+                    iconCls: 'icon-ok',
+                    handler: function () {
+                        //提交表单
+                        //调用子窗口的方法.
+                        var childWindow = $("#addFrame")[0].contentWindow;//表示获取了嵌入在iframe中的子窗体的window对象。
+                        childWindow.subForm();//调用子窗体中的方法，完成表单的提交。
+                    }
+                }, {
+                    text: '取消',
+                    iconCls: 'icon-cancel',
+                    handler: function () {
+                        $('#addDiv').dialog('close');
+                    }
+                }]
+            });
+            //给ifrme指定页面的URL地址。
+            $("#addFrame").attr("src", '@Url.Action("Add", "ActionInfo")');
+        }
+        //添加完成后调用该方法。
+        function afterAdd(data) {
+            if (data == "ok") {
+                $('#addDiv').dialog('close');
+                $('#tt').datagrid('reload');//加载表格不会跳到第一页。
+            } else {
+                $.messager.alert("提醒", "添加记录失败，请稍候重试!", "error");
+            }
+        }
+
+        //编辑信息
+        function editInfo(aId) {
+            
+            $("#editDiv").css("display", "block");
+            $('#editDiv').dialog({
+                title: '编辑权限',
+                width: 500,
+                height: 400,
+                collapsible: true,
+                maximizable: true,
+                resizable: true,
+                modal: true,
+                buttons: [{
+                    text: '确定',
+                    iconCls: 'icon-ok',
+                    handler: function () {
+                        //提交表单
+                        //调用子窗口的方法.
+                        var childWindow = $("#editFrame")[0].contentWindow;//表示获取了嵌入在iframe中的子窗体的window对象。
+                        childWindow.subForm();//调用子窗体中的方法，完成表单的提交。
+                    }
+                }, {
+                    text: '取消',
+                    iconCls: 'icon-cancel',
+                    handler: function () {
+                        $('#editDiv').dialog('close');
+                    }
+                }]
+            });
+            //给ifrme指定页面的URL地址。
+            $("#editFrame").attr("src", '@Url.Action("Edit", "ActionInfo")?aId=' + aId);
+        }
+        //编辑完成后调用该方法。
+        function afterEdit(data) {
+            if (data == "ok") {
+                $('#editDiv').dialog('close');
+                $('#tt').datagrid('reload');//加载表格不会跳到第一页。
+            } else {
+                $.messager.alert("提醒", "编辑记录失败，请稍候重试!", "error");
+            }
+        }
+
+    </script>
+</head>
+<body>
+    <!------------列表------------------>
+    <div>
+        <table id="tt" style="width: 700px;" iconcls="icon-edit">
+        </table>
+    </div>
+
+    <!------------toolbar------------------>
+    <div id="tb" style="padding: 5px; height: auto">
+        <div style="margin-bottom: 5px">
+            <a href="javascript:void(0);" class="easyui-linkbutton" id="btnAdd" iconcls="icon-add" plain="true">增加</a>
+            <a href="javascript:void(0);" class="easyui-linkbutton" id="btnEdit" iconcls="icon-edit" plain="true">编辑</a>
+            <a href="javascript:void(0);" class="easyui-linkbutton" id="btnDelete" iconcls="icon-remove" plain="true">删除</a>
+        </div>
+        <div>
+            添加时间 从:
+            <input class="easyui-datebox" id="from" style="width: 100px">
+            到:
+            <input class="easyui-datebox" id="to" style="width: 100px;">
+            <span style="margin:0 3px 0 10px;">编号:</span><input class="easyui-textbox" id="searchId" style="width: 60px; height: 22px; border: 1px solid #95B8E7;">
+            <span style="margin:0 3px 0 10px;">权限名称:</span><input class="easyui-textbox" id="searchName" style="width: 100px; height: 22px; border: 1px solid #95B8E7;">
+            <a href="javascript:void(0);" class="easyui-linkbutton" id="btnSearch" iconCls="icon-search" @*data-options="iconCls:'icon-search',handle:function(){alert(1)}"*@>查找</a>&nbsp;&nbsp;&nbsp;<a href="javascript:void(0);" class="easyui-linkbutton" id="btnClear" iconcls="icon-no">清除</a>
+        </div>
+    </div>
+
+    <!------------添加表单------------------>
+    <div id="addDiv">
+        <iframe id="addFrame" style="width: 100%; height:98%" frameborder="0"></iframe>
+    </div>
+    <!------------编辑表单------------------>
+    <div id="editDiv">
+        <iframe id="editFrame" style="width: 100%; height:98%" frameborder="0"></iframe>
+    </div>
+</body>
+</html>
