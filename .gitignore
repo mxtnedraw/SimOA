@@ -3,11 +3,7 @@
 *.ldb  
 *.sln
 *.suo
-<<<<<<< HEAD
-Readme.txt  
-=======
 Readme.txt
->>>>>>> 0f7026b45d026d8447a75c4a48952855815324a8
 
 #过滤文件夹Debug,Release,obj  
 Debug/  
